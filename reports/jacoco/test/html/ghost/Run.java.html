@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Run.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Assignment2</a> &gt; <a href="index.source.html" class="el_package">ghost</a> &gt; <span class="el_source">Run.java</span></div><h1>Run.java</h1><pre class="source lang-java linenums">package ghost;
+
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
+import processing.core.PApplet;
+import processing.core.PFont;
+import processing.core.PImage;
+
+/**
+ * This class manage most fields and main methods.
+ */
+public class Run {
+    private Player player;
+<span class="fc" id="L20">    private List&lt;Fruit&gt; fruits = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L21">    private List&lt;Fruit&gt; superFruits = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L23">    private List&lt;Fruit&gt; sodaCans = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L25">    private List&lt;Fruit&gt; allFruits = new ArrayList&lt;&gt;();</span>
+    private MyMap map;
+<span class="fc" id="L27">    private boolean end = false;</span>
+<span class="fc" id="L28">    private int endTime = Integer.MAX_VALUE;</span>
+    private String filename;
+    private long lives;
+    private long speed;
+    private long frightenedLen;
+<span class="fc" id="L33">    private List&lt;Integer&gt; modeLengths = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L35">    private List&lt;Chaser&gt; chasers = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L36">    private List&lt;Chaser&gt; ambushers = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L37">    private List&lt;Chaser&gt; ignorants = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L38">    private List&lt;Chaser&gt; whims = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L40">    private List&lt;Chaser&gt; allGhosts = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L42">    private boolean reset = false;</span>
+    private PFont font;
+
+<span class="fc" id="L45">    public Run(){</span>
+
+<span class="fc" id="L47">    }</span>
+
+    /**
+     * Set end
+     * @param status status of end
+     */
+    public void setEnd(boolean status){
+<span class="fc" id="L54">        this.end = status;</span>
+<span class="fc" id="L55">    }</span>
+
+    /**
+     * get end value
+     * @return end value
+     */
+    public boolean getEnd(){
+<span class="fc" id="L62">        return this.end;</span>
+    }
+
+    /**
+     * Get the object of MyMap.
+     * @return Get the object of MyMap.
+     */
+    public MyMap getMap(){
+<span class="fc" id="L70">        return map;</span>
+    }
+
+    /**
+     * Get the object of Player.
+     * @return Get the object of Player.
+     */
+    public Player getPlayer(){
+<span class="fc" id="L78">        return player;</span>
+    }
+
+    /**
+     * Get the remaining lives of the player.
+     * @return Get the number of lives of the player.
+     */
+    public int getLives(){
+<span class="fc" id="L86">        return (int) lives;</span>
+    }
+
+    /**
+     * Get the frightened length.
+     * @return Get the frightened length.
+     */
+    public int getFrightenedLen(){
+<span class="fc" id="L94">        return (int) frightenedLen;</span>
+    }
+
+    /**
+     * Get the list of common fruits.
+     * @return Get the list of common fruits.
+     */
+    public List&lt;Fruit&gt; getFruits(){
+<span class="fc" id="L102">        return fruits;</span>
+    }
+    
+    /**
+     * Get the list of super fruits.
+     * @return Get the list of super fruits.
+     */
+    public List&lt;Fruit&gt; getSuperFruits(){
+<span class="fc" id="L110">        return superFruits;</span>
+    }
+
+    /**
+     * Get the list of soda cans.
+     * @return Get the list of soda cans.
+     */
+    public List&lt;Fruit&gt; getSodaCans(){
+<span class="fc" id="L118">        return sodaCans;</span>
+    }
+
+    /**
+     * Get the list of all fruits.
+     * @return Get the list of all fruits.
+     */
+    public List&lt;Fruit&gt; getAllFruits(){
+<span class="fc" id="L126">        return allFruits;</span>
+    }
+
+    /**
+     * Get the list of all ghosts.
+     * @return Get the list of all ghosts.
+     */
+    public List&lt;Chaser&gt; getAllGhosts(){
+<span class="fc" id="L134">        return allGhosts;</span>
+    }
+
+    /**
+     * Set whether we need to reset all positions of ghosts and player.
+     * @param status Set the reset field into new value.
+     */
+    public void setReset(boolean status){
+<span class="fc" id="L142">        this.reset = status;</span>
+<span class="fc" id="L143">    }</span>
+
+    /**
+     * Get reset value.
+     * @return the value of the field reset.
+     */
+    public boolean getReset(){
+<span class="fc" id="L150">        return this.reset;</span>
+    }
+
+    /**
+     * Get mode lengths.
+     * @return Get a list of Integer represents mode lengths.
+     */
+    public List&lt;Integer&gt; getModeLengths(){
+<span class="fc" id="L158">        return modeLengths;</span>
+    }
+
+    /**
+     * Get all chasers.
+     * @return A list of all chasers.
+     */
+    public List&lt;Chaser&gt; getChasers(){
+<span class="fc" id="L166">        return chasers;</span>
+    }
+
+    /**
+     * Read the .json file.
+     */
+    public void readJson(){
+<span class="fc" id="L173">        JSONParser jsonParser = new JSONParser();</span>
+        try{
+<span class="fc" id="L175">            JSONObject jsonObject = (JSONObject) jsonParser.parse(new FileReader(&quot;config.json&quot;));</span>
+<span class="fc" id="L176">            this.filename = (String) jsonObject.get(&quot;map&quot;);</span>
+<span class="fc" id="L177">            this.lives = (long) jsonObject.get(&quot;lives&quot;);</span>
+<span class="fc" id="L178">            this.speed = (long) jsonObject.get(&quot;speed&quot;);</span>
+<span class="fc" id="L179">            this.frightenedLen = (long) jsonObject.get(&quot;frightenedLength&quot;);</span>
+<span class="fc" id="L180">            JSONArray jsonArray = (JSONArray) jsonObject.get(&quot;modeLengths&quot;);</span>
+
+<span class="pc bpc" id="L182" title="1 of 2 branches missed.">            if (jsonArray != null){</span>
+<span class="fc bfc" id="L183" title="All 2 branches covered.">                for (int i = 0; i &lt; jsonArray.size(); i++){</span>
+<span class="fc" id="L184">                    this.modeLengths.add(Integer.parseInt(jsonArray.get(i).toString()));</span>
+                }
+            }
+            
+<span class="nc" id="L188">        }catch (Exception e){</span>
+<span class="nc" id="L189">            e.printStackTrace();</span>
+<span class="fc" id="L190">        }</span>
+<span class="fc" id="L191">    }</span>
+
+    /**
+     * Initialize objects of all required classes
+     * @param app An object of App class which is a subclass of PApplet.
+     * @param playerClosed An object of PImage which load the image of player closed.
+     * @param playerLeft An object of PImage which load the image of player left opened.
+     * @param playerRight An object of PImage which load the image of player right opened.
+     * @param playerUp An object of PImage which load the image of player up opened.
+     * @param playerDown An object of PImage which load the image of player down opened.
+     * @param fruit An object of PImage which load the image of fruit.
+     * @param superFruit An object of PImage which load the image of super fruit.
+     * @param chaser An object of PImage which load the image of chaser.
+     * @param ambusher An object of PImage which load the image of ambusher.
+     * @param ignorant An object of PImage which load the image of ignorant.
+     * @param whim An object of PImage which load the image of whim.
+     * @param frightened An object of PImage which load the image of frightened ghost.
+     * @param soda An object of PImage which load the image of soda.
+     * @param font An object of Font.
+     */ 
+    public void setObjects(PApplet app, PImage playerClosed, PImage playerLeft, PImage playerRight, PImage playerUp, PImage playerDown, PImage fruit, PImage superFruit, PImage chaser, PImage ambusher, PImage ignorant, PImage whim, PImage frightened, PImage soda, PFont font){
+
+<span class="fc" id="L213">        readJson();</span>
+<span class="fc" id="L214">        this.player = new Player(0, 0, playerClosed, playerLeft, playerRight, playerUp, playerDown, (int) this.speed, app);</span>
+        
+<span class="fc" id="L216">        this.map = new MyMap(this.filename, app);</span>
+<span class="fc" id="L217">        this.map.getAllPositions(app, this.filename, player);</span>
+<span class="fc" id="L218">        this.font = font;</span>
+<span class="fc" id="L219">        List&lt;int[]&gt; fruitsPositions = this.map.getFruitsList();</span>
+<span class="fc bfc" id="L220" title="All 2 branches covered.">        for (int[] p : fruitsPositions){</span>
+<span class="fc" id="L221">            this.fruits.add(new Fruit(fruit, p[0], p[1]));</span>
+<span class="fc" id="L222">        }</span>
+
+<span class="fc" id="L224">        List&lt;int[]&gt; superFruitsPositions = this.map.getSuperFruitsList();</span>
+<span class="fc bfc" id="L225" title="All 2 branches covered.">        for (int[] p : superFruitsPositions){</span>
+<span class="fc" id="L226">            this.superFruits.add(new SuperFruit(superFruit, p[0], p[1]));</span>
+<span class="fc" id="L227">        }</span>
+
+<span class="fc" id="L229">        List&lt;int[]&gt; sodaPositions = this.map.getSodaList();</span>
+<span class="fc bfc" id="L230" title="All 2 branches covered.">        for (int[] p : sodaPositions){</span>
+<span class="fc" id="L231">            this.sodaCans.add(new Soda(soda, p[0], p[1]));</span>
+<span class="fc" id="L232">        }</span>
+<span class="fc" id="L233">        allFruits.addAll(fruits);</span>
+<span class="fc" id="L234">        allFruits.addAll(superFruits);</span>
+<span class="fc" id="L235">        allFruits.addAll(sodaCans);</span>
+
+<span class="fc" id="L237">        List&lt;int[]&gt; chasersPositions = this.map.getChasersList();</span>
+<span class="fc bfc" id="L238" title="All 2 branches covered.">        for (int[] p : chasersPositions){</span>
+<span class="fc" id="L239">            this.chasers.add(new Chaser(p[0], p[1], chaser, frightened, (int)this.speed));</span>
+<span class="fc" id="L240">        }</span>
+
+<span class="fc" id="L242">        List&lt;int[]&gt; ambushersPositions = this.map.getAmbushersList();</span>
+<span class="fc bfc" id="L243" title="All 2 branches covered.">        for (int[] p : ambushersPositions){</span>
+<span class="fc" id="L244">            this.ambushers.add(new Ambusher(p[0], p[1], ambusher, frightened, (int) this.speed));</span>
+<span class="fc" id="L245">        }</span>
+
+<span class="fc" id="L247">        List&lt;int[]&gt; ignorantPositions = this.map.getIgnorantList();</span>
+<span class="fc bfc" id="L248" title="All 2 branches covered.">        for (int[] p : ignorantPositions){</span>
+<span class="fc" id="L249">            this.ignorants.add(new Ignorant(p[0], p[1], ignorant, frightened, (int) this.speed));</span>
+<span class="fc" id="L250">        }</span>
+
+<span class="fc" id="L252">        List&lt;int[]&gt; whimsPositions = this.map.getWhimsList();</span>
+<span class="fc bfc" id="L253" title="All 2 branches covered.">        for (int[] p : whimsPositions){</span>
+<span class="fc" id="L254">            this.whims.add(new Whim(p[0], p[1], whim, frightened, (int) this.speed));</span>
+<span class="fc" id="L255">        }</span>
+
+<span class="fc" id="L257">        allGhosts.addAll(chasers);</span>
+<span class="fc" id="L258">        allGhosts.addAll(ignorants);</span>
+<span class="fc" id="L259">        allGhosts.addAll(ambushers);</span>
+<span class="fc" id="L260">        allGhosts.addAll(whims);</span>
+<span class="fc" id="L261">    }</span>
+
+    /**
+     * Reset the player and ghosts.
+     */
+    public void reset(){
+<span class="fc bfc" id="L267" title="All 2 branches covered.">        if (this.reset){</span>
+<span class="fc" id="L268">            this.lives -= 1;</span>
+<span class="fc bfc" id="L269" title="All 2 branches covered.">            if (player != null){</span>
+<span class="fc" id="L270">                this.player.reset();</span>
+            }
+<span class="fc bfc" id="L272" title="All 2 branches covered.">            for (Chaser g : allGhosts){</span>
+<span class="fc" id="L273">                g.reset();</span>
+<span class="fc" id="L274">            }</span>
+<span class="fc" id="L275">            this.reset = false;</span>
+        }
+<span class="fc" id="L277">    }</span>
+
+    /**
+     * Judge the game is end or not.
+     * @return If the game has ended, return true. Otherwise, return false.
+     */
+    public boolean isEnd(){
+<span class="fc" id="L284">        return this.end;</span>
+    }
+
+    /**
+     * Set the end time.
+     * @param endTime the end time.
+     */
+    public void setEndTime(int endTime){
+<span class="fc" id="L292">        this.endTime = endTime;</span>
+<span class="fc" id="L293">    }</span>
+
+    /**
+     * Get the end Time
+     * @return End time.
+     */
+    public int getEndTime(){
+<span class="fc" id="L300">        return this.endTime;</span>
+    }
+
+    /**
+     * Set lives
+     * @param lives the number of lives
+     */
+    public void setLives(int lives){
+<span class="fc" id="L308">        this.lives = lives;</span>
+<span class="fc" id="L309">    }</span>
+
+
+    /**
+     * Judge win or over
+     * @param app An object of App
+     * @param frameCount Accumulated frame number of current time.
+     */
+    public void winOrOver(PApplet app, int frameCount){
+    
+<span class="fc bfc" id="L319" title="All 2 branches covered.">        if (font != null){</span>
+<span class="fc" id="L320">            app.textFont(font);</span>
+        }
+        
+<span class="fc" id="L323">        int now = (int) frameCount / 60;</span>
+
+<span class="fc bfc" id="L325" title="All 2 branches covered.">        if (now - endTime &gt;= 10){</span>
+<span class="pc bpc" id="L326" title="1 of 2 branches missed.">            if (app != null){</span>
+<span class="fc" id="L327">                app.setup();</span>
+            }
+            
+<span class="fc" id="L330">            endTime = Integer.MAX_VALUE;</span>
+<span class="fc" id="L331">            end = false;</span>
+        }
+
+
+<span class="fc" id="L335">        boolean win = true;</span>
+<span class="fc bfc" id="L336" title="All 2 branches covered.">        for (Fruit f : this.allFruits){</span>
+<span class="pc bpc" id="L337" title="1 of 2 branches missed.">            if (f.beEat == false){</span>
+<span class="fc" id="L338">                win = false;</span>
+<span class="fc" id="L339">                break;</span>
+            }
+<span class="nc" id="L341">        }</span>
+
+<span class="fc bfc" id="L343" title="All 2 branches covered.">        if (win){</span>
+<span class="pc bpc" id="L344" title="1 of 2 branches missed.">            if (app != null){</span>
+<span class="fc" id="L345">                app.text(&quot;YOU WIN&quot;, 112, 280);</span>
+            }
+            
+
+<span class="fc bfc" id="L349" title="All 2 branches covered.">            if (end == false){</span>
+<span class="fc" id="L350">                endTime = now;</span>
+            }
+<span class="fc" id="L352">            end = true;</span>
+            
+        }
+
+<span class="fc" id="L356">        boolean over = false;</span>
+<span class="fc bfc" id="L357" title="All 2 branches covered.">        if (lives &lt; 0){</span>
+<span class="fc" id="L358">            over = true;</span>
+        }
+
+<span class="fc bfc" id="L361" title="All 2 branches covered.">        if (over){</span>
+<span class="pc bpc" id="L362" title="1 of 2 branches missed.">            if (app != null){</span>
+<span class="fc" id="L363">                app.text(&quot;GAME OVER&quot;, 95, 280);</span>
+            }
+            
+
+<span class="pc bpc" id="L367" title="1 of 2 branches missed.">            if (end == false){</span>
+<span class="nc" id="L368">                endTime = now;</span>
+            }
+<span class="fc" id="L370">            end = true;</span>
+        }
+
+        
+<span class="fc" id="L374">    }</span>
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

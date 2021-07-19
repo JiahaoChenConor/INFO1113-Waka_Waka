@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Player.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Assignment2</a> &gt; <a href="index.source.html" class="el_package">ghost</a> &gt; <span class="el_source">Player.java</span></div><h1>Player.java</h1><pre class="source lang-java linenums">package ghost;
+import processing.core.PImage;
+import java.util.List;
+import processing.core.PApplet;
+
+/**
+ * The class Player represents Waka. 
+ */
+public class Player {
+
+    private int x;
+    private int y;
+
+    private int startX;
+    private int startY;
+<span class="fc" id="L16">    private boolean setStart = true;</span>
+    private PImage playerClosed;
+    private PImage player;
+
+    private PImage playerLeft;
+    private PImage playerRight;
+    private PImage playerUp;
+    private PImage playerDown;
+    private int goVertical;
+    private int goHorizon;
+    private int direction;
+    private int speed;
+<span class="fc" id="L28">    private boolean isFrightened = false;</span>
+<span class="fc" id="L29">    private boolean debug = false;</span>
+
+<span class="fc" id="L31">    private int unavailableDir = -1;</span>
+
+<span class="fc" id="L33">    private int startFrightenedTime = Integer.MAX_VALUE;</span>
+<span class="fc" id="L34">    private int frightenedTimes = 0;</span>
+    
+<span class="fc" id="L36">    private int previousKeyCode = 0;</span>
+<span class="fc" id="L37">    private int nowKeyCode = 0;</span>
+
+    /**
+     * Constructs a new Player object. The instance stores the parameters as its own properties.
+     * @param x x-axis position 
+     * @param y y-axis position
+     * @param player the image of player
+     * @param playerLeft the image of playerLeft
+     * @param playerRight the image of playerRight
+     * @param playerUp the image of playerUp
+     * @param playerDown the image of playerDown
+     * @param speed the speed of player
+     * @param app An object of class App
+     */
+<span class="fc" id="L51">    public Player(int x, int y, PImage player, PImage playerLeft, PImage playerRight, PImage playerUp, PImage playerDown, int speed, PApplet app){</span>
+<span class="fc" id="L52">        this.x = x;</span>
+<span class="fc" id="L53">        this.y = y;</span>
+<span class="fc" id="L54">        this.playerClosed = player;</span>
+<span class="fc" id="L55">        this.player = playerLeft;</span>
+<span class="fc" id="L56">        this.playerLeft = playerLeft;</span>
+<span class="fc" id="L57">        this.playerRight = playerRight;</span>
+<span class="fc" id="L58">        this.playerUp = playerUp;</span>
+<span class="fc" id="L59">        this.playerDown = playerDown;</span>
+
+<span class="fc" id="L61">        this.speed = speed;</span>
+<span class="fc" id="L62">        this.goVertical = 0;</span>
+<span class="fc" id="L63">        this.goHorizon = 0;</span>
+
+<span class="fc" id="L65">    }</span>
+
+    /**
+     * set x-axis positions
+     * @param x x-axis position
+     */
+    public void setX(int x){
+<span class="fc" id="L72">        this.x = x;</span>
+<span class="fc" id="L73">    }</span>
+
+    /**
+     * set y-axis position
+     * @param y y-axis position
+     */
+    public void setY(int y){
+<span class="fc" id="L80">        this.y = y;</span>
+<span class="fc" id="L81">    }</span>
+
+    /**
+     * Set unavailable direction.
+     * @param d direction number
+     */
+    public void setUnavailableDir(int d){
+<span class="fc" id="L88">        this.unavailableDir = d;</span>
+<span class="fc" id="L89">    }</span>
+
+    /**
+     * Get unavailable direction.
+     * @return unavailable direction number.
+     */
+    public int getUnavailableDir(){
+<span class="fc" id="L96">        return this.unavailableDir;</span>
+    }
+
+    /**
+     * Receive keyboard input and convert it into the corresponding direction
+     * 
+     *       0 represents up &lt;br&gt;
+     *       1 represents left &lt;br&gt;
+     *       2 represents right &lt;br&gt;
+     *       3 represents down &lt;br&gt;
+     * @param key keyCode, up: 38, left: 37, right: 39, down: 40
+     * @return return the number representing the direction button in keyboard. If the keyCode not in 38, 37, 39, 40 return -1.
+     */
+    public static int directionNum(int key){
+<span class="fc bfc" id="L110" title="All 2 branches covered.">        if (key == 38){</span>
+<span class="fc" id="L111">            return 0;</span>
+<span class="fc bfc" id="L112" title="All 2 branches covered.">        }else if (key == 37){</span>
+<span class="fc" id="L113">            return 1;</span>
+<span class="fc bfc" id="L114" title="All 2 branches covered.">        }else if (key == 39){</span>
+<span class="fc" id="L115">            return 2;</span>
+<span class="fc bfc" id="L116" title="All 2 branches covered.">        }else if (key == 40){</span>
+<span class="fc" id="L117">            return 3;</span>
+        }
+<span class="fc" id="L119">        return -1;</span>
+    }
+
+    /**
+     * return the PImage object
+     * @return return the PImage object
+     */
+    public PImage getPlayerClosed(){
+<span class="fc" id="L127">        return this.playerClosed;</span>
+    }
+
+    /**
+     * return the PImage object
+     * @return return the PImage object
+     */
+    public PImage getPlayerLeft(){
+<span class="fc" id="L135">        return this.playerLeft;</span>
+    }
+
+    /**
+     * return the PImage object
+     * @return return the PImage object
+     */
+    public PImage getPlayerRight(){
+<span class="fc" id="L143">        return this.playerRight;</span>
+    }
+
+    /**
+     * return the PImage object
+     * @return return the PImage object
+     */
+    public PImage getPlayerUp(){
+<span class="fc" id="L151">        return this.playerUp;</span>
+    }
+
+    /**
+     * return the PImage object
+     * @return return the PImage object
+     */
+    public PImage getPlayerDown(){
+<span class="fc" id="L159">        return this.playerDown;</span>
+    }
+
+
+
+    /**
+     * Get the x-asis position of the player 
+     * @return the x-asis position of the player
+     */
+    public int getX(){
+<span class="fc" id="L169">        return this.x;</span>
+    }
+
+    /**
+     * Get the y-asis position of the player 
+     * @return the y-asis position of the player
+     */
+    public int getY(){
+<span class="fc" id="L177">        return this.y;</span>
+    }
+
+    /**
+     * Get the direction of the player, 0 represents up, 1 represents left, 2 represents right, 3 represents down
+     * @return the direction of the player
+     */
+    public int getDirection(){
+<span class="fc" id="L185">        return this.direction;</span>
+    }
+
+    /**
+     * Get the start frightened time of the player 
+     * @return the start frightened time of the player
+     */
+    public int getStartFrightenedTime(){
+<span class="fc" id="L193">        return this.startFrightenedTime;</span>
+    }
+
+    /**
+     * Set the start frightened time of the player 
+     * @param time the start frightened time of the player
+     */
+    public void setStartFrightenedTime(int time){
+<span class="fc" id="L201">        this.startFrightenedTime = time;</span>
+<span class="fc" id="L202">    }</span>
+
+    /**
+     * Get the status of the player : frightened or not.
+     * @return The status of the player, true means frightened, false means not frightened.
+     */
+    public boolean getIsFrightened(){
+<span class="fc" id="L209">        return this.isFrightened;</span>
+    }
+
+    /**
+     * Set the status of the player : frightened or not.
+     * @param status Whether frightened, true means frightened, false means not frightened.
+     */
+    public void setFrightened(boolean status){
+<span class="fc" id="L217">        this.isFrightened = status;</span>
+<span class="fc bfc" id="L218" title="All 2 branches covered.">        if (status == true){</span>
+<span class="fc" id="L219">            this.frightenedTimes ++ ;</span>
+        }
+<span class="fc" id="L221">    }</span>
+
+    /**
+     * Set the start position of the player.
+     * @param x x-axis coordinate of the player.
+     * @param y y-axis coordinate of the player.
+     */
+    public void setPosition(int x, int y){
+<span class="fc bfc" id="L229" title="All 2 branches covered.">        if (setStart){</span>
+<span class="fc" id="L230">            this.startX = x;</span>
+<span class="fc" id="L231">            this.startY = y;</span>
+<span class="fc" id="L232">            setStart = false;</span>
+        }
+
+<span class="fc" id="L235">        this.x = x;</span>
+<span class="fc" id="L236">        this.y = y;</span>
+<span class="fc" id="L237">    }</span>
+
+    /**
+     * Reset the player's position to the initial position.
+     */
+    public void reset(){
+<span class="fc" id="L243">        this.x = this.startX;</span>
+<span class="fc" id="L244">        this.y = this.startY;</span>
+<span class="fc" id="L245">    }</span>
+
+    /**
+     * Get the frightened times of the player.
+     * @return The frightened times of the player.
+     */
+    public int getFrightenedTimes(){
+<span class="fc" id="L252">        return this.frightenedTimes;</span>
+    }
+
+    /**
+     * return the status of debug
+     * @return the status of debug
+     */
+    public boolean getDebug(){
+<span class="fc" id="L260">        return this.debug;</span>
+    }
+
+    /**
+     * Set debug mode.
+     * @param status the status of debug.
+     */
+    public void setDebug(boolean status){
+<span class="fc" id="L268">        this.debug = status;</span>
+<span class="fc" id="L269">    }</span>
+
+    /**
+     * Start the debug mode according to the value of the field: debug.
+     * &lt;p&gt;
+     * If any reference parameter is null, do nothing.
+     * &lt;/p&gt;
+     * @param app An object of App class which is a subclass of PApplet.
+     * @param allGhosts A list of all objects of ghosts.
+     */
+    public void debugMode(PApplet app, List&lt;Chaser&gt; allGhosts){
+<span class="fc bfc" id="L280" title="All 2 branches covered.">        if (allGhosts == null){</span>
+<span class="fc" id="L281">            return;</span>
+        }
+
+<span class="fc bfc" id="L284" title="All 2 branches covered.">        if (this.debug){</span>
+<span class="fc bfc" id="L285" title="All 2 branches covered.">            for (Chaser g : allGhosts){</span>
+<span class="pc bpc" id="L286" title="1 of 2 branches missed.">                if (app != null){</span>
+                    
+<span class="nc" id="L288">                    g.drawLine(app);</span>
+                }
+<span class="fc" id="L290">            }</span>
+        }
+<span class="fc" id="L292">    }</span>
+
+    /**
+     * Draw the player and the line between the player and all ghosts according to whether debug mode is enabled.
+     * &lt;p&gt;
+     * In one 8 frame, draw the player of closed mouth and in the next 8 frame, draw the player with open mouth.&lt;br&gt;
+     * If any reference parameter is null, do nothing.
+     * &lt;/p&gt;
+     * @param app An object of App class which is a subclass of PApplet
+     * @param frameCount The number of current frame
+     * @param allGhosts The list of objects of all ghosts 
+     */
+    public void drawPlayer(PApplet app, int frameCount, List&lt;Chaser&gt; allGhosts){
+<span class="fc bfc" id="L305" title="All 2 branches covered.">        if (allGhosts == null){</span>
+<span class="fc" id="L306">            return;</span>
+        }
+<span class="fc bfc" id="L308" title="All 2 branches covered.">        if ((frameCount / 8) % 2 == 0){</span>
+<span class="fc bfc" id="L309" title="All 2 branches covered.">            if (app != null){</span>
+<span class="fc" id="L310">                app.image(this.playerClosed, this.x - 5, this.y - 5);</span>
+            }
+            
+        }else{
+<span class="fc bfc" id="L314" title="All 2 branches covered.">            if (app != null){</span>
+<span class="fc" id="L315">                app.image(this.player, this.x - 5, this.y - 5);</span>
+            }
+            
+        }
+
+<span class="fc" id="L320">        debugMode(app, allGhosts);</span>
+    
+<span class="fc" id="L322">    }</span>
+    
+    /**
+     * Draw the remaining lives of the player on the bottom of the screen.
+     * @param app An object of App class which is a subclass of PApplet
+     * @param lives The remaining number of lives
+     */
+    public void drawLives (PApplet app, int lives){
+<span class="fc bfc" id="L330" title="All 2 branches covered.">        if (app == null){</span>
+<span class="fc" id="L331">            return;</span>
+        }
+<span class="fc bfc" id="L333" title="All 2 branches covered.">        for (int i = 0; i &lt; lives; i++){</span>
+<span class="fc bfc" id="L334" title="All 2 branches covered.">            if (this.playerRight != null){</span>
+<span class="fc" id="L335">                app.image(this.playerRight, 12 + i * 28, 34 * 16);</span>
+            }
+            
+        }
+<span class="fc" id="L339">    }</span>
+
+    /**
+     * Eat the fruit in the current position and return the type of the fruit.
+     * If any reference parameter is null, return false.
+     * @param fruits The list of all fruits including super fruits
+     * @param ghosts The list of all ghosts
+     * @return If it is a common fruit return &quot;fruit&quot;, if it is a super fruit, return &quot;superFruit&quot;. If it is a soda can, return &quot;soda&quot;.
+     */
+    public String eat(List&lt;Fruit&gt; fruits, List&lt;Chaser&gt; ghosts) {
+<span class="pc bpc" id="L349" title="1 of 4 branches missed.">        if (fruits == null || ghosts == null){</span>
+<span class="fc" id="L350">            return null;</span>
+        }
+
+<span class="fc bfc" id="L353" title="All 2 branches covered.">        for (Fruit f : fruits){</span>
+<span class="pc bpc" id="L354" title="1 of 6 branches missed.">            if (f.getX() == this.x &amp;&amp; f.getY() == this.y &amp;&amp; f.isExist()){</span>
+<span class="fc" id="L355">                f.delete();</span>
+<span class="fc bfc" id="L356" title="All 2 branches covered.">                if (f.isSuperFruit()){</span>
+<span class="fc bfc" id="L357" title="All 2 branches covered.">                    for (Chaser g : ghosts){</span>
+<span class="fc" id="L358">                        g.setFrightened(true);</span>
+<span class="fc" id="L359">                    }</span>
+<span class="fc" id="L360">                    setFrightened(true);</span>
+                    
+<span class="fc" id="L362">                    return &quot;superFruit&quot;;</span>
+                }
+<span class="fc bfc" id="L364" title="All 2 branches covered.">                if (f.isSoda()){</span>
+<span class="fc bfc" id="L365" title="All 2 branches covered.">                    for (Chaser g : ghosts){</span>
+<span class="fc" id="L366">                        g.setFrightened(true);</span>
+<span class="fc" id="L367">                        g.setInvisible(true);</span>
+<span class="fc" id="L368">                    }</span>
+<span class="fc" id="L369">                    setFrightened(true);</span>
+
+<span class="fc" id="L371">                    return &quot;soda&quot;;</span>
+                }
+            }
+<span class="fc" id="L374">        }</span>
+<span class="fc" id="L375">        return &quot;fruit&quot;;</span>
+    }
+
+
+    /**
+     * Receive keyboard input and convert it into the corresponding direction
+     * Then change the direction of the player and change the displacement in a specific direction
+     * If any reference parameter is null, do nothing.
+     * @param dir The number representation of direction
+     * @param app An object of App class which is a subclass of PApplet
+     */
+    public void receiveKeyboard(int dir, PApplet app){
+<span class="fc bfc" id="L387" title="All 2 branches covered.">        if (app == null){</span>
+<span class="fc" id="L388">            return;</span>
+        }
+
+<span class="fc bfc" id="L391" title="All 2 branches covered.">        if (dir == 0){</span>
+<span class="fc" id="L392">            up();</span>
+<span class="fc" id="L393">            this.player = this.playerUp;</span>
+<span class="fc bfc" id="L394" title="All 2 branches covered.">        }else if (dir == 1){</span>
+<span class="fc" id="L395">            left();</span>
+<span class="fc" id="L396">            this.player = this.playerLeft;</span>
+<span class="fc bfc" id="L397" title="All 2 branches covered.">        }else if (dir == 2){</span>
+<span class="fc" id="L398">            right();</span>
+<span class="fc" id="L399">            this.player = this.playerRight;</span>
+<span class="fc bfc" id="L400" title="All 2 branches covered.">        }else if (dir == 3){</span>
+<span class="fc" id="L401">            down();</span>
+<span class="fc" id="L402">            this.player = this.playerDown;</span>
+        }
+<span class="fc" id="L404">    }</span>
+
+    /**
+     * Change up displacement and change the direction of player into up.
+     */
+    public void up(){
+<span class="fc" id="L410">        this.goVertical = 0 - this.speed;</span>
+<span class="fc" id="L411">        this.goHorizon = 0;</span>
+<span class="fc" id="L412">        this.direction = 0;</span>
+<span class="fc" id="L413">    }</span>
+
+    /**
+     * Change left displacement and change the direction of player into left.
+     */
+    public void left(){
+<span class="fc" id="L419">        this.goHorizon = 0 - this.speed;</span>
+<span class="fc" id="L420">        this.goVertical = 0;</span>
+<span class="fc" id="L421">        this.direction = 1;</span>
+<span class="fc" id="L422">    }</span>
+
+    /**
+     * Change right displacement and change the direction of player into right.
+     */
+    public void right(){
+<span class="fc" id="L428">        this.goHorizon = this.speed;</span>
+<span class="fc" id="L429">        this.goVertical = 0;</span>
+<span class="fc" id="L430">        this.direction = 2;</span>
+<span class="fc" id="L431">    }</span>
+
+    /**
+     * Change down displacement and change the direction of player into down.
+     */
+    public void down(){
+<span class="fc" id="L437">        this.goVertical = this.speed;</span>
+<span class="fc" id="L438">        this.goHorizon = 0;</span>
+<span class="fc" id="L439">        this.direction = 3;</span>
+<span class="fc" id="L440">    }</span>
+
+    /**
+     * Move the player according to field 'goHorizon' and field 'goVertical'    &lt;br&gt;
+     * When goHorizon is greater than 0, it means y-axis plus goHorizon which is positive, go down, vice versa. &lt;br&gt;
+     * When goVertical is greater than 0, it means x-axis plus goVertical which is positive, go right, vice versa.
+     */
+    public void move(){
+<span class="fc" id="L448">        this.x += this.goHorizon;</span>
+<span class="fc" id="L449">        this.y += this.goVertical; </span>
+<span class="fc" id="L450">    }</span>
+
+
+    /**
+     * Move the player according to the keyCode
+     * If any reference parameter is null, do nothing.
+     * @param app An object of App class which is a subclass of PApplet.
+     * @param player An object of Player class
+     * @param keyPressed Whether press the keyboard, pressed is true, not pressed is false
+     * @param keyCode The number of the button pressed in keyboard
+     * @param map An object of MyMap class
+     * @param frameCount The number of current frame.
+     */
+    public void playerMove(PApplet app, Player player, boolean keyPressed, int keyCode, MyMap map, int frameCount){
+<span class="pc bpc" id="L464" title="1 of 6 branches missed.">        if (app == null || player == null || map == null){</span>
+<span class="fc" id="L465">            return;</span>
+        }
+
+<span class="fc" id="L468">        boolean[] walls = null;</span>
+<span class="pc bpc" id="L469" title="1 of 4 branches missed.">        if (player.getX() % 16 == 0 &amp;&amp; player.getY() % 16 == 0){</span>
+<span class="fc" id="L470">            walls = map.judgeWall(player.getX(), player.getY());</span>
+<span class="fc bfc" id="L471" title="All 4 branches covered.">            if (unavailableDir &gt;= 0 &amp;&amp; !walls[unavailableDir]){</span>
+<span class="fc" id="L472">                player.receiveKeyboard(unavailableDir, app);</span>
+            }
+        }
+        
+<span class="fc" id="L476">        this.nowKeyCode = keyCode;</span>
+<span class="pc bpc" id="L477" title="1 of 4 branches missed.">        if (this.nowKeyCode == 32 &amp;&amp; this.previousKeyCode == 0){</span>
+<span class="nc bnc" id="L478" title="All 2 branches missed.">            this.debug = !this.debug;</span>
+<span class="nc" id="L479">            this.previousKeyCode = this.nowKeyCode;</span>
+<span class="nc" id="L480">            return;</span>
+        }
+<span class="fc" id="L482">        this.previousKeyCode = this.nowKeyCode;</span>
+
+<span class="fc bfc" id="L484" title="All 2 branches covered.">        if (keyPressed){</span>
+
+<span class="pc bpc" id="L486" title="1 of 4 branches missed.">            if (player.getX() % 16 == 0 &amp;&amp; player.getY() % 16 == 0){</span>
+<span class="fc" id="L487">                int dir = Player.directionNum(keyCode);</span>
+                
+<span class="pc bpc" id="L489" title="1 of 2 branches missed.">                if (dir == -1){</span>
+<span class="nc" id="L490">                    return;</span>
+                }
+
+<span class="fc" id="L493">                walls = map.judgeWall(player.getX(), player.getY());</span>
+<span class="fc bfc" id="L494" title="All 2 branches covered.">                if (!walls[dir]){</span>
+<span class="fc" id="L495">                    player.receiveKeyboard(dir, app);</span>
+                }else{
+<span class="fc" id="L497">                    unavailableDir = dir;</span>
+                }
+<span class="fc" id="L499">            }else{</span>
+<span class="fc" id="L500">                int dir = Player.directionNum(keyCode);</span>
+<span class="fc" id="L501">                unavailableDir = dir;</span>
+            }
+        }
+
+<span class="fc bfc" id="L505" title="All 4 branches covered.">        if (walls == null || !walls[player.getDirection()]){</span>
+<span class="fc" id="L506">            player.move();</span>
+        }
+<span class="fc" id="L508">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

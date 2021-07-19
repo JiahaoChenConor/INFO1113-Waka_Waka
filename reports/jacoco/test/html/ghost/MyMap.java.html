@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MyMap.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Assignment2</a> &gt; <a href="index.source.html" class="el_package">ghost</a> &gt; <span class="el_source">MyMap.java</span></div><h1>MyMap.java</h1><pre class="source lang-java linenums">package ghost;
+import java.util.*;
+
+import java.io.*;
+import processing.core.PApplet;
+import processing.core.PImage;
+
+/**
+ * The class MyMap contains everything through parsing map file.
+ */
+public class MyMap {
+    
+    private String filename;
+    private PImage downLeft;
+    private PImage downRight;
+    private PImage horizontal;
+    private PImage vertical;
+    private PImage upLeft;
+    private PImage upRight;
+    private char[][] mapList;
+    private boolean[] fourDirections;
+<span class="fc" id="L22">    private List&lt;int[]&gt; fruits = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L23">    private List&lt;int[]&gt; superFruits = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L24">    private List&lt;int[]&gt; soda = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L25">    private List&lt;int[]&gt; chasers = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L26">    private List&lt;int[]&gt; ambushers = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L27">    private List&lt;int[]&gt; ignorant = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L28">    private List&lt;int[]&gt; whims = new ArrayList&lt;&gt;();</span>
+
+    /**
+     * Constructs a new MyMap object. The instance stores the parameters as its own properties.
+     * @param filename the file contains all information about map
+     * @param app An object of class App
+     */
+<span class="fc" id="L35">    public MyMap(String filename, PApplet app){</span>
+<span class="fc" id="L36">        this.filename = filename;</span>
+<span class="fc" id="L37">        transformFileTo2DList(this.filename);</span>
+<span class="fc bfc" id="L38" title="All 2 branches covered.">        if (app != null){</span>
+<span class="fc" id="L39">            loadImage(app);</span>
+        }
+<span class="fc" id="L41">    }</span>
+
+    /**
+     * Load all images
+     * @param app An object of class App.
+     */
+    public void loadImage(PApplet app){
+<span class="fc bfc" id="L48" title="All 2 branches covered.">        if (app == null){</span>
+<span class="fc" id="L49">            return;</span>
+        }
+<span class="fc" id="L51">        this.horizontal = app.loadImage(&quot;horizontal.png&quot;);</span>
+<span class="fc" id="L52">        this.vertical = app.loadImage(&quot;vertical.png&quot;);</span>
+<span class="fc" id="L53">        this.upLeft = app.loadImage(&quot;upLeft.png&quot;);</span>
+<span class="fc" id="L54">        this.upRight = app.loadImage(&quot;upRight.png&quot;);</span>
+<span class="fc" id="L55">        this.downLeft = app.loadImage(&quot;downLeft.png&quot;);</span>
+<span class="fc" id="L56">        this.downRight = app.loadImage(&quot;downRight.png&quot;);</span>
+<span class="fc" id="L57">    }</span>
+    /**
+     * Transform the file into a 2D list of string.
+     * @param filename The name of the file contains map.
+     */
+    public void transformFileTo2DList(String filename) {
+<span class="fc bfc" id="L63" title="All 2 branches covered.">        if (filename == null){</span>
+<span class="fc" id="L64">            return;</span>
+        }
+        
+<span class="fc" id="L67">        char[][] lines = new char[36][28];</span>
+
+        try {
+<span class="fc" id="L70">            BufferedReader in = new BufferedReader(new FileReader(filename));</span>
+            String str;
+<span class="fc" id="L72">            int lineNum = 0;</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">            while ((str = in.readLine()) != null) {</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">                for (int column = 0 ; column &lt; 28 ; column ++){</span>
+<span class="fc" id="L75">                    lines[lineNum][column] = str.charAt(column);</span>
+                }
+<span class="fc" id="L77">                lineNum ++;</span>
+            }
+<span class="fc" id="L79">            in.close();</span>
+<span class="fc" id="L80">        } catch (IOException e) {</span>
+<span class="fc" id="L81">            System.out.println(&quot;This map file does not exist&quot;);</span>
+<span class="fc" id="L82">        }</span>
+<span class="fc" id="L83">        this.mapList = lines;</span>
+<span class="fc" id="L84">    }</span>
+
+    /**
+     * Draw the map.
+     * @param app An object of class App
+     * @param filename the name of map file
+     */
+    public void drawMap(PApplet app, String filename){
+<span class="fc bfc" id="L92" title="All 4 branches covered.">        if (app == null || filename == null){</span>
+<span class="fc" id="L93">            return;</span>
+        }
+<span class="fc bfc" id="L95" title="All 2 branches covered.">        for (int i = 0; i &lt; 36; i ++){</span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">            for (int j = 0; j &lt; 28; j ++){</span>
+<span class="fc" id="L97">                char num = this.mapList[i][j];</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">                if (num == '1'){</span>
+<span class="fc bfc" id="L99" title="All 2 branches covered.">                    if (horizontal != null){</span>
+<span class="fc" id="L100">                        app.image(horizontal, j * 16, i * 16);</span>
+                    }
+                    
+<span class="fc bfc" id="L103" title="All 2 branches covered.">                }else if (num == '2'){</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">                    if (vertical != null){</span>
+<span class="fc" id="L105">                        app.image(vertical, j * 16, i * 16);</span>
+                    }
+                    
+<span class="fc bfc" id="L108" title="All 2 branches covered.">                }else if (num == '3'){</span>
+
+<span class="fc bfc" id="L110" title="All 2 branches covered.">                    if (upLeft != null){</span>
+<span class="fc" id="L111">                        app.image(upLeft, j * 16, i * 16);</span>
+                    }
+                    
+<span class="fc bfc" id="L114" title="All 2 branches covered.">                }else if (num == '4'){</span>
+
+<span class="fc bfc" id="L116" title="All 2 branches covered.">                    if (upRight != null){</span>
+<span class="fc" id="L117">                        app.image(upRight, j * 16, i * 16);</span>
+                    }
+                    
+<span class="fc bfc" id="L120" title="All 2 branches covered.">                }else if (num == '5'){</span>
+
+<span class="fc bfc" id="L122" title="All 2 branches covered.">                    if (downLeft != null){</span>
+<span class="fc" id="L123">                        app.image(downLeft, j * 16, i * 16);</span>
+                    }
+                    
+<span class="fc bfc" id="L126" title="All 2 branches covered.">                }else if (num == '6'){</span>
+
+<span class="fc bfc" id="L128" title="All 2 branches covered.">                    if (downRight != null){</span>
+<span class="fc" id="L129">                        app.image(downRight, j * 16, i * 16);</span>
+                    }
+                    
+                }
+            }
+        }   
+<span class="fc" id="L135">    }</span>
+
+    /**
+     * Get original positions of all ghosts, player and fruit.
+     * @param app An object of App class which is a subclass of PApplet.
+     * @param filename The name of the file contains map.
+     * @param player An object of Player class
+     */
+    public void getAllPositions(PApplet app, String filename, Player player){
+<span class="fc bfc" id="L144" title="All 4 branches covered.">        if (filename == null || player == null){</span>
+<span class="fc" id="L145">            return;</span>
+        }
+<span class="fc bfc" id="L147" title="All 2 branches covered.">        for (int i = 0; i &lt; 36; i ++){</span>
+<span class="fc bfc" id="L148" title="All 2 branches covered.">            for (int j = 0; j &lt; 28; j ++){</span>
+<span class="fc" id="L149">                char num = this.mapList[i][j];</span>
+<span class="fc bfc" id="L150" title="All 2 branches covered.">                if (num == '7'){</span>
+<span class="fc" id="L151">                    int[] position = new int[]{j * 16, i * 16};</span>
+<span class="fc" id="L152">                    this.fruits.add(position); </span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">                }else if (num == '8'){</span>
+<span class="fc" id="L154">                    this.superFruits.add(new int[]{j * 16, i * 16});</span>
+<span class="fc bfc" id="L155" title="All 2 branches covered.">                }else if (num == 'p'){</span>
+<span class="fc" id="L156">                    player.setPosition(j * 16, i * 16);</span>
+<span class="fc bfc" id="L157" title="All 2 branches covered.">                }else if (num == 'c'){</span>
+<span class="fc" id="L158">                    int[] position = new int[]{j * 16, i * 16};</span>
+<span class="fc" id="L159">                    this.chasers.add(position);</span>
+<span class="fc bfc" id="L160" title="All 2 branches covered.">                }else if (num == 'a'){</span>
+<span class="fc" id="L161">                    int[] position = new int[]{j * 16, i * 16};</span>
+<span class="fc" id="L162">                    this.ambushers.add(position);</span>
+<span class="fc bfc" id="L163" title="All 2 branches covered.">                }else if (num == 'i'){</span>
+<span class="fc" id="L164">                    int[] position = new int[]{j * 16, i * 16};</span>
+<span class="fc" id="L165">                    this.ignorant.add(position);</span>
+<span class="fc bfc" id="L166" title="All 2 branches covered.">                }else if (num == 'w'){</span>
+<span class="fc" id="L167">                    int[] position = new int[]{j * 16, i * 16};</span>
+<span class="fc" id="L168">                    this.whims.add(position);</span>
+<span class="fc bfc" id="L169" title="All 2 branches covered.">                }else if (num == 's'){</span>
+<span class="fc" id="L170">                    int[] position = new int[]{j * 16, i * 16};</span>
+<span class="fc" id="L171">                    this.soda.add(position);</span>
+                }
+            }
+        }   
+<span class="fc" id="L175">    }</span>
+
+    /**
+     * Get all positions of chasers.
+     * @return A list of array which contains x-asis position and y-asis position.
+     */
+    public List&lt;int[]&gt; getChasersList(){
+<span class="fc" id="L182">        return this.chasers;</span>
+    }
+
+    /**
+     * Get all positions of ambushers.
+     * @return A list of array which contains x-asis position and y-asis position.
+     */
+    public List&lt;int[]&gt; getAmbushersList(){
+<span class="fc" id="L190">        return this.ambushers;</span>
+    }
+
+
+    /**
+     * Get all positions of ignorant.
+     * @return A list of array which contains x-asis position and y-asis position.
+     */
+    public List&lt;int[]&gt; getIgnorantList(){
+<span class="fc" id="L199">        return this.ignorant;</span>
+    }
+
+    /**
+     * Get all positions of whims.
+     * @return A list of array which contains x-asis position and y-asis position.
+     */
+    public List&lt;int[]&gt; getWhimsList(){
+<span class="fc" id="L207">        return this.whims;</span>
+    }
+
+    /**
+     * Get all positions of fruits.
+     * @return A list of array which contains x-asis position and y-asis position.
+     */
+    public List&lt;int[]&gt; getFruitsList(){
+<span class="fc" id="L215">        return this.fruits;</span>
+    }
+
+    /**
+     * Get all positions of soda can.
+     * @return A list of array which contains x-asis position and y-asis position.
+     */
+    public List&lt;int[]&gt; getSodaList(){
+<span class="fc" id="L223">        return this.soda;</span>
+    }
+
+    /**
+     * Get all positions of super fruits.
+     * @return A list of array which contains x-asis position and y-asis position.
+     */
+    public List&lt;int[]&gt; getSuperFruitsList(){
+<span class="fc" id="L231">        return this.superFruits;</span>
+    }
+
+    /**
+     * Determine if it is a wall 
+     * @param c a number or letter in the file
+     * @return if it represents wall, return true. Otherwise return false.
+     */
+    public boolean isWall(char c){
+<span class="fc bfc" id="L240" title="All 12 branches covered.">        return c == '1' || c == '2' || c == '3' || c == '4' || c == '5' || c == '6'; </span>
+    }
+
+    /**
+     * Determine whether the four directions of the player's current location are walls.
+     * @param x The x-asis position.
+     * @param y The y-asis position.
+     * @return A boolean array, [up is wall or not, left is wall or not, right is wall or not, down is wall or not]
+     */
+    public boolean[] judgeWall(int x, int y){
+        
+<span class="fc bfc" id="L251" title="All 4 branches covered.">        if (x % 16 == 0 &amp;&amp; y % 16 == 0){</span>
+<span class="fc" id="L252">            int row = (int) y / 16;</span>
+<span class="fc" id="L253">            int column = (int) x / 16;</span>
+
+<span class="fc bfc" id="L255" title="All 2 branches covered.">            if (mapList == null){</span>
+<span class="fc" id="L256">                return null;</span>
+            }
+
+            // Since the map is surrounded by walls, the player’s surroundings will not cross the border
+<span class="fc" id="L260">            this.fourDirections = new boolean[]{isWall(mapList[row - 1][column]), isWall(mapList[row][column - 1]),</span>
+<span class="fc" id="L261">                isWall(mapList[row][column + 1]), isWall(mapList[row + 1][column])};</span>
+        }      
+        
+<span class="fc" id="L264">        return fourDirections;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

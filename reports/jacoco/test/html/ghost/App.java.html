@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>App.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Assignment2</a> &gt; <a href="index.source.html" class="el_package">ghost</a> &gt; <span class="el_source">App.java</span></div><h1>App.java</h1><pre class="source lang-java linenums">package ghost;
+
+import processing.core.PApplet;
+import processing.core.PFont;
+import processing.core.PImage;
+
+/**
+ * The main class, inherited class PApplet, used to run the app
+ */
+public class App extends PApplet {
+    public static final int WIDTH = 448;
+    public static final int HEIGHT = 576;
+    private Run runner;
+    
+
+<span class="fc" id="L16">    public App() {}</span>
+
+    public Run getRunner(){
+<span class="fc" id="L19">        return this.runner;</span>
+    }
+
+    /**
+     * Set up all images
+     */
+    public void setup() {
+<span class="fc" id="L26">        frameRate(60);</span>
+        
+<span class="fc" id="L28">        PImage playerClosed = this.loadImage(&quot;playerClosed.png&quot;);</span>
+<span class="fc" id="L29">        PImage playerUp= this.loadImage(&quot;playerUp.png&quot;);</span>
+<span class="fc" id="L30">        PImage playerDown = this.loadImage(&quot;playerDown.png&quot;);</span>
+<span class="fc" id="L31">        PImage playerLeft = this.loadImage(&quot;playerLeft.png&quot;);</span>
+<span class="fc" id="L32">        PImage playerRight = this.loadImage(&quot;playerRight.png&quot;);</span>
+<span class="fc" id="L33">        PImage chaser = this.loadImage(&quot;chaser.png&quot;);</span>
+<span class="fc" id="L34">        PImage ambusher = this.loadImage(&quot;ambusher.png&quot;);</span>
+<span class="fc" id="L35">        PImage ignorant = this.loadImage(&quot;ignorant.png&quot;);</span>
+<span class="fc" id="L36">        PImage whim = this.loadImage(&quot;whim.png&quot;);</span>
+<span class="fc" id="L37">        PImage frightened = this.loadImage(&quot;frightened.png&quot;);</span>
+<span class="fc" id="L38">        PImage fruit = this.loadImage(&quot;fruit.png&quot;);</span>
+<span class="fc" id="L39">        PImage superFruit = this.loadImage(&quot;superFruit.png&quot;);</span>
+<span class="fc" id="L40">        PImage soda = this.loadImage(&quot;soda-can.png&quot;);</span>
+<span class="fc" id="L41">        runner = new Run();</span>
+<span class="fc" id="L42">        PFont font = this.createFont(&quot;PressStart2P-Regular.ttf&quot;, 32);</span>
+<span class="fc" id="L43">        runner.setObjects(this, playerClosed, playerLeft, playerRight, playerUp, playerDown, fruit, superFruit, chaser, ambusher, ignorant, whim, frightened, soda, font);</span>
+<span class="fc" id="L44">        this.stroke(255);</span>
+<span class="fc" id="L45">    }</span>
+
+    /**
+     * Set the width and height.
+     */
+    public void settings() {
+<span class="fc" id="L51">        size(WIDTH, HEIGHT);</span>
+<span class="fc" id="L52">    }</span>
+
+    /**
+     * Draw everything.
+     */
+    public void draw() {  
+<span class="fc" id="L58">        background(0, 0, 0);</span>
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">        if (!runner.isEnd()){</span>
+<span class="fc" id="L60">            runner.getPlayer().drawLives(this, (int) runner.getLives());</span>
+<span class="fc" id="L61">            runner.getMap().drawMap(this, &quot;map.txt&quot;);</span>
+<span class="fc" id="L62">            runner.getPlayer().playerMove(this, runner.getPlayer(), keyPressed, keyCode, runner.getMap(), frameCount);</span>
+<span class="fc" id="L63">            Fruit.drawFruits(this, runner.getPlayer(), runner.getAllFruits(), runner.getAllGhosts(), frameCount);</span>
+<span class="fc" id="L64">            runner.getPlayer().drawPlayer(this, frameCount, runner.getAllGhosts());</span>
+<span class="fc" id="L65">            boolean isReset = Chaser.drawGhosts(this, runner.getModeLengths(), frameCount, runner.getFrightenedLen(), runner.getAllGhosts(), runner.getChasers(), runner.getPlayer(), runner.getMap());</span>
+<span class="fc" id="L66">            runner.setReset(isReset);</span>
+<span class="fc" id="L67">            runner.reset();   </span>
+        }
+<span class="fc" id="L69">        runner.winOrOver(this, frameCount);</span>
+<span class="fc" id="L70">    }</span>
+
+    public static void main(String[] args) {
+<span class="nc" id="L73">        PApplet.main(&quot;ghost.App&quot;);</span>
+<span class="nc" id="L74">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,539 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Chaser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Assignment2</a> &gt; <a href="index.source.html" class="el_package">ghost</a> &gt; <span class="el_source">Chaser.java</span></div><h1>Chaser.java</h1><pre class="source lang-java linenums">package ghost;
+
+import processing.core.PImage;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
+import processing.core.PApplet;
+
+/**
+ * A kind of Ghost.
+ */
+public class Chaser {
+
+    protected int x;
+    protected int y;
+
+    protected int startX;
+    protected int startY;
+
+    protected int goHorizontal;
+    protected int goVertical;
+
+    protected PImage ghost;
+    protected PImage frightened;
+<span class="fc" id="L29">    protected boolean isAlive = true;</span>
+
+    protected int speed;
+<span class="fc" id="L32">    protected int[] target = new int[2];</span>
+<span class="fc" id="L33">    protected boolean isFrightened = false;</span>
+<span class="fc" id="L34">    protected boolean isInvisible = false;</span>
+<span class="fc" id="L35">    protected int startFrightenedTime = Integer.MAX_VALUE;</span>
+    
+    /**
+     * Constructs a new Chaser object. The instance stores the parameters as its own properties.
+     * @param x the x-axis position
+     * @param y the y-axis position
+     * @param ghost image of chaser
+     * @param frightened image of frightened chaser
+     * @param speed the speed of chaser
+     */
+<span class="fc" id="L45">    public Chaser(int x, int y, PImage ghost, PImage frightened, int speed){</span>
+<span class="fc" id="L46">        this.x = x;</span>
+<span class="fc" id="L47">        this.y = y;</span>
+
+<span class="fc" id="L49">        this.startX = x;</span>
+<span class="fc" id="L50">        this.startY = y;</span>
+
+<span class="fc" id="L52">        this.ghost = ghost;</span>
+<span class="fc" id="L53">        this.frightened = frightened;</span>
+<span class="fc" id="L54">        this.speed = speed;</span>
+<span class="fc" id="L55">    }</span>
+
+    /**
+     * Move the chaser according to field 'goHorizon' and field 'goVertical'
+     * &lt;p&gt;
+     * When goHorizon is greater than 0, it means y-axis plus goHorizon which is positive, go down, vice versa.
+     * When goVertical is greater than 0, it means x-axis plus goVertical which is positive, go right, vice versa.
+     * &lt;/p&gt;
+     */
+    public void move(){
+<span class="fc" id="L65">        this.x += this.goHorizontal;</span>
+<span class="fc" id="L66">        this.y += this.goVertical;</span>
+<span class="fc" id="L67">    }</span>
+
+    /**
+     * Get the x-asis position of the chaser
+     * @return the x-asis position of the chaser
+     */
+    public int getX(){
+<span class="fc" id="L74">        return this.x;</span>
+    }
+
+    /**
+     * Get the y-asis position of the chaser
+     * @return the y-asis position of the chaser
+     */
+    public int getY(){
+<span class="fc" id="L82">        return this.y;</span>
+    }
+
+    /**
+     * Get the target of chaser
+     * @return an array contains two integers, the first element is x-axis position and the second one is y-axis position.
+     */
+    public int[] getTarget(){
+<span class="fc" id="L90">        return this.target;</span>
+    }
+
+    /**
+     * Set the status of this ghost.
+     * @return frightened is true, false is not frightened.
+     */
+    public boolean getFrightened(){
+<span class="fc" id="L98">        return this.isFrightened;</span>
+    }
+        
+    /**
+     * Set the status of this ghost.
+     * @param status true is frightened, false is not frightened.
+     */
+    public void setFrightened(boolean status){
+<span class="fc" id="L106">        this.isFrightened = status;</span>
+<span class="fc" id="L107">    }</span>
+
+    /**
+     * Draw the ghost
+     * If any reference parameter is null, do nothing.
+     * @param app An object of App class which is a subclass of PApplet.
+     */
+    public void draw(PApplet app){
+<span class="fc bfc" id="L115" title="All 2 branches covered.">        if (app == null){</span>
+<span class="fc" id="L116">            return;</span>
+        }
+
+<span class="pc bpc" id="L119" title="1 of 4 branches missed.">        if (!this.isFrightened &amp;&amp; this.isAlive){</span>
+<span class="fc" id="L120">            app.image(this.ghost, this.x - 5, this.y - 5);</span>
+<span class="pc bpc" id="L121" title="2 of 4 branches missed.">        }else if (this.isFrightened &amp;&amp; this.isAlive){</span>
+<span class="nc" id="L122">            app.image(this.frightened, this.x - 5, this.y - 5);</span>
+        }
+        
+<span class="fc" id="L125">    }</span>
+
+    /**
+     * Draw the line between the ghost and its target
+     * If any reference parameter is null, do nothing.
+     * @param app An object of App class which is a subclass of PApplet.
+     */
+    public void drawLine(PApplet app){
+
+<span class="fc bfc" id="L134" title="All 2 branches covered.">        if (this.isAlive){</span>
+<span class="fc bfc" id="L135" title="All 2 branches covered.">            if (app != null){</span>
+<span class="fc bfc" id="L136" title="All 2 branches covered.">                if (!this.isFrightened){</span>
+<span class="fc" id="L137">                    app.line(this.x, this.y, target[0], target[1]);</span>
+                }else{
+<span class="fc bfc" id="L139" title="All 2 branches covered.">                    if (this.goHorizontal &gt; 0){</span>
+<span class="fc" id="L140">                        app.line(this.x, this.y, this.x + 16, this.y);</span>
+<span class="fc bfc" id="L141" title="All 2 branches covered.">                    }else if (this.goHorizontal &lt; 0){</span>
+<span class="fc" id="L142">                        app.line(this.x, this.y, this.x - 16, this.y);</span>
+<span class="fc bfc" id="L143" title="All 2 branches covered.">                    }else if (this.goVertical &gt; 0){</span>
+<span class="fc" id="L144">                        app.line(this.x, this.y, this.x, this.y + 16);</span>
+<span class="pc bpc" id="L145" title="1 of 2 branches missed.">                    }else if (this.goVertical &lt; 0){</span>
+<span class="fc" id="L146">                        app.line(this.x, this.y, this.x, this.y - 16);</span>
+                    }
+                }
+            }
+        }
+        
+<span class="fc" id="L152">    }</span>
+
+    /**
+     * Judge this ghost is alive or not
+     * @return If this ghost is still alive, return true, otherwise return false.
+     */
+    public boolean getIsAlive(){
+<span class="fc" id="L159">        return this.isAlive;</span>
+    }
+
+    /**
+     * Set the ghosts is alive of not
+     * @param status alive or dead
+     */
+    public void setAlive(boolean status){
+<span class="fc" id="L167">        this.isAlive = status;</span>
+<span class="fc" id="L168">    }</span>
+
+    /**
+     * Make this ghost die
+     */
+    public void die(){
+<span class="fc" id="L174">        this.isAlive = false;</span>
+<span class="fc" id="L175">    }</span>
+
+    /**
+     * Get the ghost is invisible or not.
+     * @return If this ghost is invisible, return true, otherwise return false.
+     */
+    public boolean getIsInvisible(){
+<span class="fc" id="L182">        return this.isInvisible;</span>
+    }
+
+    /**
+     * Set the invisible status.
+     * @param status Set the ghost's field 'invisible' into value of status.
+     */
+    public void setInvisible(boolean status){
+<span class="fc" id="L190">        this.isInvisible = status;</span>
+<span class="fc" id="L191">    }</span>
+
+    /**
+     * Set the position of this ghost
+     * @param x x-axis
+     * @param y y-axis
+     */
+    public void setPosition(int x, int y){
+<span class="fc" id="L199">        this.x = x;</span>
+<span class="fc" id="L200">        this.y = y;</span>
+<span class="fc" id="L201">    }</span>
+
+    /**
+     * Reset the player's position to the initial position.
+     */
+    public void reset(){
+<span class="fc" id="L207">        this.x = this.startX;</span>
+<span class="fc" id="L208">        this.y = this.startY;</span>
+<span class="fc" id="L209">    }</span>
+
+    /**
+     * Calculate the distance between two positions 
+     * @param startX x-axis of the start position
+     * @param startY y-axis of the start position
+     * @param endX x-axis of the end position
+     * @param endY y-axis of the end position
+     * @return return the distance between two sets of coordinates
+     */
+    public double calculateDistance(int startX, int startY, int endX, int endY){
+<span class="fc" id="L220">        return Math.sqrt((startX - endX) * (startX  - endX) + (startY - endY) * (startY - endY));</span>
+    }
+
+    /**
+     * Set the mode of the player.
+     * If any reference parameter is null, do nothing.
+     * @param isScatter whether the player is in scatter mode.
+     * @param player An object of the class Player.
+     * @param map An object of the class MyMap.
+     * @param chaser An object of the class Chaser.
+     */
+    public void setMode(boolean isScatter, Player player, MyMap map, Chaser chaser){
+        // here we do not use chaser, only whim use
+<span class="fc bfc" id="L233" title="All 2 branches covered.">        if (player == null){</span>
+<span class="fc" id="L234">            return;</span>
+        }
+
+<span class="fc bfc" id="L237" title="All 4 branches covered.">        if (this.x % 16 == 0 &amp;&amp; this.y % 16 == 0){</span>
+<span class="fc" id="L238">            updateTarget(isScatter, player, chaser);</span>
+<span class="fc" id="L239">            List&lt;String&gt; priorities = constructPriorities();</span>
+<span class="fc" id="L240">            setPriorityDirection(priorities, map);</span>
+        }
+<span class="fc" id="L242">    }   </span>
+
+    /**
+     * Update the target according to different modes.
+     * &lt;p&gt;
+     * Upper left corner (0, 0), Upper right corner (28 * 16, 0), Bottom left (0, 35 * 16), Bottom right (28 * 16, 35 * 16)&lt;br&gt;
+     * If any reference parameter is null, do nothing.
+     * &lt;/p&gt;
+     * @param isScatter If it is true, the mode is 'scatter'.If it is false, the mode is 'chase'.
+     * @param player An object of Player.
+     * @param chaser An object of the class Chaser.
+     */
+    public void updateTarget(boolean isScatter, Player player, Chaser chaser){
+        // here we do not use chaser, only whim use
+<span class="fc bfc" id="L256" title="All 2 branches covered.">        if (player == null){</span>
+<span class="fc" id="L257">            return;</span>
+        }
+ 
+<span class="fc" id="L260">        int playerX = player.getX();</span>
+<span class="fc" id="L261">        int playerY = player.getY();</span>
+
+<span class="fc bfc" id="L263" title="All 2 branches covered.">        if (isScatter){</span>
+<span class="fc" id="L264">            this.target = new int[]{0, 0};</span>
+
+        }else{
+<span class="fc" id="L267">            this.target[0] = playerX;</span>
+<span class="fc" id="L268">            this.target[1] = playerY;</span>
+        }
+<span class="fc" id="L270">        checkTarget();</span>
+<span class="fc" id="L271">    }</span>
+
+    /**
+     *  If the target location is outside the bounds of the grid, the closest point is used.
+     */
+    public void checkTarget(){
+<span class="fc bfc" id="L277" title="All 2 branches covered.">        if (this.target[0] &lt; 0){</span>
+<span class="fc" id="L278">            this.target[0] = 0;</span>
+<span class="fc bfc" id="L279" title="All 2 branches covered.">        }else if (this.target[0] &gt; 28 * 16){</span>
+<span class="fc" id="L280">            this.target[0] = 28 * 16;</span>
+        }
+
+<span class="fc bfc" id="L283" title="All 2 branches covered.">        if (this.target[1] &lt; 0){</span>
+<span class="fc" id="L284">            this.target[1] = 0;</span>
+<span class="fc bfc" id="L285" title="All 2 branches covered.">        }else if (this.target[1] &gt; 35 * 16){</span>
+<span class="fc" id="L286">            this.target[1] = 35 * 16;</span>
+        }
+<span class="fc" id="L288">    }</span>
+
+    /**
+     * Whether one direction can go.
+     * If any reference parameter is null, do nothing.
+     * @param direction The string of one direction.
+     * @param map An object of MyMap
+     * @return Whether this direction can go.
+     */
+    public boolean canGo(String direction, MyMap map){
+
+<span class="fc bfc" id="L299" title="All 2 branches covered.">        if (direction == null){</span>
+<span class="fc" id="L300">            return false;</span>
+        }
+
+<span class="fc" id="L303">        boolean[] walls = map.judgeWall(this.x, this.y);</span>
+        // If you want to go up, there must be no wall above you 
+        //    and your current direction cannot be down(can't step back, unless there is no way to go)
+<span class="fc bfc" id="L306" title="All 2 branches covered.">        if (direction.equals(&quot;Up&quot;)){</span>
+<span class="fc bfc" id="L307" title="All 4 branches covered.">            if (!walls[0] &amp;&amp; !(this.goVertical &gt; 0)){</span>
+<span class="fc" id="L308">                return true;</span>
+            }else{
+<span class="fc" id="L310">                return false;</span>
+            }
+<span class="fc bfc" id="L312" title="All 2 branches covered.">        }else if (direction.equals(&quot;Left&quot;)){</span>
+<span class="pc bpc" id="L313" title="1 of 4 branches missed.">            if (!walls[1] &amp;&amp; !(this.goHorizontal &gt; 0)){</span>
+<span class="fc" id="L314">                return true;</span>
+            }else{
+<span class="fc" id="L316">                return false;</span>
+            }
+<span class="fc bfc" id="L318" title="All 2 branches covered.">        }else if (direction.equals(&quot;Right&quot;)){</span>
+<span class="fc bfc" id="L319" title="All 4 branches covered.">            if (!walls[2] &amp;&amp; !(this.goHorizontal &lt; 0)){</span>
+<span class="fc" id="L320">                return true;</span>
+            }else{
+<span class="fc" id="L322">                return false;</span>
+            }
+<span class="fc bfc" id="L324" title="All 2 branches covered.">        }else if (direction.equals(&quot;Down&quot;)){</span>
+<span class="pc bpc" id="L325" title="1 of 4 branches missed.">            if (!walls[3] &amp;&amp; !(this.goVertical &lt; 0)){</span>
+<span class="fc" id="L326">                return true;</span>
+            }else{
+<span class="fc" id="L328">                return false;</span>
+            }
+        }
+
+<span class="fc" id="L332">        return false;</span>
+    }
+
+    /**
+     * Construct a list of string represents the priority in the four directions.
+     * @return a list of string represents the priority in the four directions.
+     */
+    public List&lt;String&gt; constructPriorities(){
+<span class="fc bfc" id="L340" title="All 2 branches covered.">        if (!this.isFrightened){</span>
+<span class="fc" id="L341">            double up = calculateDistance(target[0], target[1], this.x, this.y - 16);</span>
+<span class="fc" id="L342">            double down = calculateDistance(target[0], target[1], this.x, this.y + 16);</span>
+<span class="fc" id="L343">            double left = calculateDistance(target[0], target[1], this.x - 16, this.y);</span>
+<span class="fc" id="L344">            double right = calculateDistance(target[0], target[1], this.x + 16, this.y);</span>
+
+<span class="fc" id="L346">            Map&lt;Double,String&gt; map = new TreeMap&lt;&gt;();</span>
+<span class="fc" id="L347">            map.put(up, &quot;Up&quot;);</span>
+<span class="fc" id="L348">            map.put(down, &quot;Down&quot;);</span>
+<span class="fc" id="L349">            map.put(left, &quot;Left&quot;);</span>
+<span class="fc" id="L350">            map.put(right, &quot;Right&quot;);</span>
+        
+<span class="fc" id="L352">            Set&lt;Double&gt; keySet = map.keySet();</span>
+<span class="fc" id="L353">            List&lt;String&gt; ans = new ArrayList&lt;&gt;();</span>
+
+<span class="fc bfc" id="L355" title="All 2 branches covered.">            for (Double key : keySet) {</span>
+<span class="fc" id="L356">                ans.add(map.get(key));</span>
+<span class="fc bfc" id="L357" title="All 4 branches covered.">                if (up == key.doubleValue() &amp;&amp; !ans.contains(&quot;Up&quot;)){</span>
+<span class="fc" id="L358">                    ans.add(&quot;Up&quot;);</span>
+                }
+<span class="fc bfc" id="L360" title="All 4 branches covered.">                if (down == key.doubleValue() &amp;&amp; !ans.contains(&quot;Down&quot;)){</span>
+<span class="fc" id="L361">                    ans.add(&quot;Down&quot;);</span>
+                }
+<span class="fc bfc" id="L363" title="All 4 branches covered.">                if (left == key.doubleValue() &amp;&amp; !ans.contains(&quot;Left&quot;)){</span>
+<span class="fc" id="L364">                    ans.add(&quot;Left&quot;);</span>
+                }
+                // map must contains &quot;Right&quot;, because Right is put at last, if there is repeated value,
+                //  &quot;Right&quot; value will replace it
+<span class="fc" id="L368">            }</span>
+
+<span class="fc" id="L370">            return ans;</span>
+
+        }else{
+<span class="fc" id="L373">            List&lt;String&gt; ans = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L374">            ans.add(&quot;Up&quot;);</span>
+<span class="fc" id="L375">            ans.add(&quot;Down&quot;);</span>
+<span class="fc" id="L376">            ans.add(&quot;Left&quot;);</span>
+<span class="fc" id="L377">            ans.add(&quot;Right&quot;);</span>
+<span class="fc" id="L378">            Collections.shuffle(ans);</span>
+
+<span class="fc" id="L380">            return ans;</span>
+        }
+        
+    }
+
+    /**
+     * Change the displacement in the corresponding direction.
+     * If any reference parameter is null, do nothing.
+     * @param direction direction String, including &quot;Left&quot; &quot;Right&quot; &quot;Up&quot; &quot;Down&quot;.
+     */
+    public void setDirection(String direction){
+<span class="fc bfc" id="L391" title="All 2 branches covered.">        if (direction == null){</span>
+<span class="fc" id="L392">            return;</span>
+        }
+
+<span class="fc bfc" id="L395" title="All 2 branches covered.">        if (direction.equals(&quot;Up&quot;)){</span>
+<span class="fc" id="L396">            this.goHorizontal = 0;</span>
+<span class="fc" id="L397">            this.goVertical = 0 - this.speed;</span>
+<span class="fc bfc" id="L398" title="All 2 branches covered.">        }else if (direction.equals(&quot;Down&quot;)){</span>
+<span class="fc" id="L399">            this.goHorizontal = 0;</span>
+<span class="fc" id="L400">            this.goVertical = this.speed;</span>
+<span class="fc bfc" id="L401" title="All 2 branches covered.">        }else if (direction.equals(&quot;Left&quot;)){</span>
+<span class="fc" id="L402">            this.goHorizontal = 0 - this.speed;</span>
+<span class="fc" id="L403">            this.goVertical = 0;</span>
+<span class="pc bpc" id="L404" title="1 of 2 branches missed.">        }else if (direction.equals(&quot;Right&quot;)){</span>
+<span class="fc" id="L405">            this.goHorizontal = this.speed;</span>
+<span class="fc" id="L406">            this.goVertical = 0;</span>
+        }
+<span class="fc" id="L408">    }</span>
+
+    /**
+     * Change the displacement of the chaser in the most suitable direction. In short, change the direction of the ghost.
+     * @param priorities A list of string represents directions.
+     * @param map An object of MyMap.
+     */
+    public void setPriorityDirection(List&lt;String&gt; priorities, MyMap map){
+<span class="fc bfc" id="L416" title="All 4 branches covered.">        if (priorities == null || map == null){</span>
+<span class="fc" id="L417">            return;</span>
+        }
+        
+<span class="pc bpc" id="L420" title="1 of 2 branches missed.">        for (String priority : priorities){</span>
+<span class="fc bfc" id="L421" title="All 2 branches covered.">            if (canGo(priority, map)){</span>
+<span class="fc" id="L422">                setDirection(priority);</span>
+<span class="fc" id="L423">                return;</span>
+            }
+<span class="fc" id="L425">        }</span>
+
+        // // If there is no way to go, go in the opposite direction of the current direction.
+        // this.goHorizontal = 0 - this.goHorizontal;
+        // this.goVertical = 0 - this.goVertical;
+<span class="nc" id="L430">    }</span>
+    
+
+
+    /**
+     * prefix sum of the list modeLengths
+     * If any reference parameter is null, return null.
+     * &lt;p&gt;
+     * For example : &lt;br&gt;
+     * modeLengths: [2, 20, 2, 30, 2, 100] &lt;br&gt;
+     * prefixSum: [0,2, 22, 24, 54, 56, 156]&lt;br&gt;
+     * so the number in prefix sum represents the current time(second)
+     * If the current time is 52, 52 % 156 = 52 and 52 is between 24 and 54.
+     * &lt;/p&gt;
+     * @param modeLengths The list of integer represents the length of every mode.
+     * @return The prefix sum of the list modeLengths.If modeLengths is null, return null.
+     */
+    public static int[] prefixSum(List&lt;Integer&gt; modeLengths){
+<span class="fc bfc" id="L448" title="All 2 branches covered.">        if (modeLengths == null){</span>
+<span class="fc" id="L449">            return null;</span>
+        }
+<span class="fc" id="L451">        int[] res = new int[modeLengths.size() + 1];</span>
+<span class="fc" id="L452">        res[0] = 0;</span>
+<span class="fc bfc" id="L453" title="All 2 branches covered.">        for (int i = 1; i &lt; res.length; i++){</span>
+<span class="fc" id="L454">            res[i] = res[i - 1] + modeLengths.get(i - 1);</span>
+        }
+
+<span class="fc" id="L457">        return res;</span>
+    }
+
+    /**
+     * Draw all ghosts according to their modes.
+     * If any reference parameter is null, return false.
+     * @param app An object of App class which is a subclass of PApplet.
+     * @param modeLengths The list of integer represents the length of every mode.
+     * @param frameCount The number of current frame.
+     * @param frightenedLen The length of frightened.
+     * @param allGhosts The list of all ghosts.
+     * @param chasers The list of chasers.
+     * @param player An object of Player.
+     * @param map An object of MyMap.
+     * @return If the player is eaten by the ghost, return true, If not, return false. If any reference parameter is null, return false.
+     */
+    public static boolean drawGhosts(PApplet app, List&lt;Integer&gt; modeLengths, int frameCount, int frightenedLen, List&lt;Chaser&gt; allGhosts, List&lt;Chaser&gt; chasers, Player player, MyMap map){
+<span class="fc bfc" id="L474" title="All 12 branches covered.">        if (app == null || modeLengths == null || allGhosts == null || chasers == null || player == null ||  map == null){</span>
+<span class="fc" id="L475">            return false;</span>
+        }
+        
+<span class="fc" id="L478">        int[] prefix = prefixSum(modeLengths);</span>
+<span class="fc" id="L479">        int second = (int) frameCount / 60;</span>
+
+<span class="fc bfc" id="L481" title="All 2 branches covered.">        if (second - player.getStartFrightenedTime() &gt;= frightenedLen){</span>
+<span class="fc bfc" id="L482" title="All 2 branches covered.">            for (Chaser g : allGhosts){</span>
+<span class="fc" id="L483">                g.setFrightened(false);</span>
+<span class="fc" id="L484">                g.setInvisible(false);</span>
+<span class="fc" id="L485">            }</span>
+            
+<span class="fc" id="L487">            player.setFrightened(false);</span>
+<span class="fc" id="L488">            player.setStartFrightenedTime(Integer.MAX_VALUE);</span>
+        }
+
+<span class="fc" id="L491">        second -= frightenedLen * player.getFrightenedTimes();</span>
+<span class="fc" id="L492">        int now = -1;</span>
+<span class="pc bpc" id="L493" title="1 of 2 branches missed.">        for (int i = 0; i &lt; prefix.length - 1; i++){</span>
+<span class="fc" id="L494">            int start = prefix[i];</span>
+<span class="fc" id="L495">            int end = prefix[i + 1];</span>
+<span class="pc bpc" id="L496" title="1 of 4 branches missed.">            if (second &gt;= start &amp;&amp; second &lt; end){</span>
+<span class="fc" id="L497">                now = i;</span>
+<span class="fc" id="L498">                break;</span>
+            }
+        }
+
+<span class="fc bfc" id="L502" title="All 2 branches covered.">        for (Chaser g : allGhosts){</span>
+<span class="pc bpc" id="L503" title="1 of 8 branches missed.">            if ((Math.abs(g.getX() - player.getX()) &lt; 16 &amp;&amp; g.getY() == player.getY()) || (Math.abs(g.getY() - player.getY()) &lt; 16) &amp;&amp; g.getX() == player.getX()){                </span>
+<span class="pc bpc" id="L504" title="1 of 4 branches missed.">                if (!g.isFrightened &amp;&amp; g.getIsAlive()){</span>
+<span class="fc" id="L505">                    return true;</span>
+                }else{
+<span class="fc" id="L507">                    g.die();</span>
+                }
+            }
+
+<span class="fc bfc" id="L511" title="All 2 branches covered.">            if (now % 2 == 0){</span>
+<span class="fc bfc" id="L512" title="All 2 branches covered.">                if (chasers.size() == 0){</span>
+<span class="fc" id="L513">                    g.setMode(true, player, map, null);</span>
+                }else{  
+<span class="fc" id="L515">                    g.setMode(true, player, map, chasers.get(0));</span>
+                }
+                
+            }
+            else{
+<span class="fc bfc" id="L520" title="All 2 branches covered.">                if (chasers.size() == 0){</span>
+<span class="fc" id="L521">                    g.setMode(false, player, map, null);</span>
+                }else{  
+<span class="fc" id="L523">                    g.setMode(false, player, map, chasers.get(0));</span>
+                }
+                
+            }
+<span class="fc" id="L527">            g.move();</span>
+
+<span class="fc bfc" id="L529" title="All 2 branches covered.">            if (!g.getIsInvisible()){</span>
+<span class="fc" id="L530">                g.draw(app);</span>
+            }
+            
+            
+<span class="fc" id="L534">        }</span>
+<span class="fc" id="L535">        return false;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
